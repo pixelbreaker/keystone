@@ -30,8 +30,17 @@ var EditForm = React.createClass({
 	},
 	handleChange (event) {
 		let values = Object.assign({}, this.state.values);
-
 		values[event.path] = event.value;
+		this.setState({ values });
+	},
+	saveChanges (event) {
+		let values = Object.assign({}, this.state.values);
+		values.isPreview = false;
+		this.setState({ values });
+	},
+	previewChanges (event) {
+		let values = Object.assign({}, this.state.values);
+		values.isPreview = true;
 		this.setState({ values });
 	},
 	confirmReset (event) {
@@ -157,8 +166,16 @@ var EditForm = React.createClass({
 	},
 	renderFooterBar () {
 		var buttons = [
-			<Button key="save" type="primary" submit>Save</Button>,
+			<Button key="save" onClick={this.saveChanges} type="success" submit>Save</Button>
 		];
+		if (this.props.list.preview) {
+			buttons.push(
+				<span>&nbsp;</span>
+			)
+			buttons.push(
+				<Button key="preview" onClick={this.previewChanges} type="primary" submit>Preview</Button>
+			);
+		}
 		buttons.push(
 			<Button key="reset" onClick={this.confirmReset} type="link-cancel">
 				<ResponsiveText hiddenXS="reset changes" visibleXS="reset" />
@@ -242,6 +259,7 @@ var EditForm = React.createClass({
 					<Col lg="3/4">
 						<Form type="horizontal" className="EditForm" component="div">
 							<input type="hidden" name="action" value="updateItem" />
+							<input type="hidden" name="isPreview" value={this.state.values.isPreview} />
 							<input type="hidden" name={Keystone.csrf.key} value={Keystone.csrf.value} />
 							{this.renderNameField()}
 							{this.renderKeyOrId()}
