@@ -6,7 +6,7 @@ import FormHeading from './FormHeading';
 import AltText from './AltText';
 import FooterBar from './FooterBar';
 import InvalidFieldType from './InvalidFieldType';
-import { Button, Col, Form, FormField, FormInput, ResponsiveText, Row } from 'elemental';
+import { Alert, Button, Col, Form, FormField, FormInput, ResponsiveText, Row } from 'elemental';
 
 var EditForm = React.createClass({
 	displayName: 'EditForm',
@@ -19,6 +19,14 @@ var EditForm = React.createClass({
 			values: Object.assign({}, this.props.data.fields),
 			confirmationDialog: null,
 		};
+	},
+	componentDidMount() {
+		console.log('componentDidMount', this);
+		if(this.props.data.fields.isPreview) {
+			var url = typeof(this.props.list.previewUrl) === 'function'? this.props.list.previewUrl() : this.props.list.previewUrl;
+			url += `${this.props.data.slug}?preview=true`;
+			setTimeout(() => window.open(url), 1000);
+		}
 	},
 	getFieldProps (field) {
 		var props = Object.assign({}, field);
@@ -176,6 +184,14 @@ var EditForm = React.createClass({
 				<Button key="preview" onClick={this.previewChanges} type="primary" submit>Preview</Button>
 			);
 		}
+		if(this.props.data.fields.isPreview) {
+			buttons.push(
+				<span>&nbsp;</span>
+			)
+			buttons.push(
+				<Button key="rollback" onClick={this.rollbackChanges} type="warning" submit>Roll back</Button>
+			);
+		}
 		buttons.push(
 			<Button key="reset" onClick={this.confirmReset} type="link-cancel">
 				<ResponsiveText hiddenXS="reset changes" visibleXS="reset" />
@@ -252,9 +268,17 @@ var EditForm = React.createClass({
 			</div>
 		) : null;
 	},
+	renderPreviewAlert() {
+		let alerts = null;
+		if(this.props.data.fields.isPreview) {
+			alerts = <Alert type="warning"><strong>Warning:</strong> This document is in preview mode. Click <strong>Save</strong> to publish or <strong>Roll back</strong> to restore the last published version.</Alert>
+		}
+		return alerts;
+	},
 	render () {
 		return (
 			<form method="post" encType="multipart/form-data" className="EditForm-container">
+				{this.renderPreviewAlert()}
 				<Row>
 					<Col lg="3/4">
 						<Form type="horizontal" className="EditForm" component="div">
