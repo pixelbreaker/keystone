@@ -21,7 +21,6 @@ var EditForm = React.createClass({
     };
   },
   componentDidMount() {
-    console.log('componentDidMount', this);
     if(this.props.data.fields.isPreview) {
       var url = typeof(this.props.list.previewUrl) === 'function'? this.props.list.previewUrl() : this.props.list.previewUrl;
       url += `${this.props.data.slug}?preview=true`;
@@ -169,6 +168,8 @@ var EditForm = React.createClass({
         var props = this.getFieldProps(field);
         if (typeof Fields[field.type] !== 'function') {
           return React.createElement(InvalidFieldType, { type: field.type, path: field.path, key: field.path });
+        } else if(field.path === 'sortOrder') {
+          return;
         }
         if (props.dependsOn) {
           props.currentDependencies = {};
