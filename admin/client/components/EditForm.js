@@ -41,20 +41,14 @@ var EditForm = React.createClass({
     this.setState({ values });
   },
   saveChanges (event) {
-    let values = Object.assign({}, this.state.values);
-    values.isPreview = false;
-    this.setState({ values });
+    document.getElementById('isPreview').value = false;
   },
   previewChanges (event) {
-    let values = Object.assign({}, this.state.values);
-    values.isPreview = true;
-    this.setState({ values });
+    document.getElementById('isPreview').value = true;
   },
   rollbackChanges (event) {
     if(confirm('Rollback to last published state?')) {
-      let values = Object.assign({}, this.state.values);
-      values.isRollback = true;
-      this.setState({ values });
+      document.getElementById('isRollback').value = true;
     } else {
       event.preventDefault()
     }
@@ -293,8 +287,8 @@ var EditForm = React.createClass({
           <Col lg="3/4">
             <Form type="horizontal" className="EditForm" component="div">
               <input type="hidden" name="action" value="updateItem" />
-              <input type="hidden" name="isPreview" value={this.state.values.isPreview} />
-              <input type="hidden" name="isRollback" value={this.state.values.isRollback} />
+              <input type="hidden" name="isPreview" value={this.state.values.isPreview} id="isPreview" />
+              <input type="hidden" name="isRollback" value={this.state.values.isRollback}  id="isRollback" />
               <input type="hidden" name={Keystone.csrf.key} value={Keystone.csrf.value} />
               {this.renderNameField()}
               {this.renderKeyOrId()}
